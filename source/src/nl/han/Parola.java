@@ -38,10 +38,8 @@ public class Parola {
     }
 
     /*
-    - het registreren van een gebruiker houdt geen rekening met of een gebruiker dubbel mag bestaan
-    - registreer gebruiker
-    - controleer of gebruikersnaam al bestaat
-    - controleren van een speler moet met een wachtwoord gebeur
+    de gebruiker gerelateerde dingen moeten
+    overeenkomen met de sequence diagrammen
      */
 
     public void registreerGebruiker(String gebruikersnaam, String wachtwoord) {
@@ -58,28 +56,42 @@ public class Parola {
         return false;
     }
 
-    public Speler laadSpeler(String gebruikersnaam, String wachtwoord) {
+    public Speler laadSpeler(String gebruikersnaam) {
         for (Speler speler : spelers) {
             if (speler.getGebruikersnaam().equals(gebruikersnaam)) {
                 return speler;
+            } else {
+                throw new IllegalArgumentException("Speler niet gevonden");
             }
-
         }
-        registreerGebruiker(gebruikersnaam, wachtwoord);
-        return new Speler(gebruikersnaam, wachtwoord);
+        return null;
     }
 
-    public void koopCredits(String gebruikersnaam, int aantalCredits) {
-    }
+    // todo: implementeren
+//    public void koopCredits(String gebruikersnaam, int aantalCredits) {
+//    }
+//
+//    public void startTransactie(String gebruikersnaam) {
+//    }
+//
+//    public void verifieerbetaling() {
+//    }
 
-    public void startTransactie(String gebruikersnaam) {
-    }
-
-    public void verifieerbetaling() {
-    }
-
+    // todo: vragen toevoegen aan een quiz
     public void maakQuiz(String naamQuiz) {
+        Quiz quiz = new Quiz(naamQuiz);
+        for (Vraag vraag : vragen) {
+            quiz.addVraag(vraag);
+        }
+        quizzes.add(quiz);
     }
+
+    // todo: soort vragen toevoegen
+    public void vraagToevoegen(String vraagType, String vraag, String categorie, boolean actief, char letter) {
+        if(vraagType = 'meerkeuze'){
+        Vraag newVraag = new Vraag(vraag, categorie, actief, letter);
+         vragen.add(newVraag);
+    }}
 
 
     public String nextQuestion(String playername) {
