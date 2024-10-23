@@ -1,10 +1,11 @@
 package nl.han;
 
-public class ConcreteBerekeningB implements Berekening{
+public class Tijdsberekening implements ScoreBerekening {
+
     @Override
-    public int berekenScore(String woord, long tijd, int aantalgoed){
+    public int calculateScore(String woord, long tijd, int aantalgoed) {
         int woordScore = woord.length() * 8;
-        int tijdScore = 100 - ((int)tijd/1000);
+        int tijdScore = 100 - ((int) tijd / 1000);
         int aantalGoedScore = aantalgoed * 2;
 
         return woordScore + tijdScore + aantalGoedScore;
