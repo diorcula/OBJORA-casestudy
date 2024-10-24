@@ -4,43 +4,67 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class QuizUitvoering {
-    private ArrayList<String> gegevenAntwoorden;
-    private int aantalGoed;
-    private Woordchecker woordchecker;
+    private ArrayList<String> spelerAntwoorden;
     private Long startTijd;
-    private int score;
+    private String verkregenLetters;
+
+    private Woordchecker woordchecker;
     private Quiz quiz;
     private Speler speler;
+
     private int huidigeVraagID;
+    private int aantalGoed;
+    private int score;
+    private boolean quizFinished = false;
 
     // strategy specific
     private ScoreBerekening scoreBerekening;
 
     public QuizUitvoering(Quiz quiz, Speler speler) {
-        gegevenAntwoorden = new ArrayList<>();
+        spelerAntwoorden = new ArrayList<>();
         woordchecker = new Woordchecker();
         startTijd = System.currentTimeMillis();
         aantalGoed = 0;
         this.quiz = quiz;
         this.speler = speler;
-//        this.scoreBerekening = scoreBerekening;
     }
 
-    public void vraagGoed() {
-        aantalGoed++;
+    public String nextQuestion() {
+        if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
+            var antwoorden = (meerkeuzeVraag).getAntwoorden();
+            Collections.shuffle(antwoorden);
+            return meerkeuzeVraag.getVraagtekst() + " " +
+                    antwoorden.get(0).getAlternatief() + " - "
+                    + antwoorden.get(1).getAlternatief() + " - "
+                    + antwoorden.get(2).getAlternatief() + " - "
+                    + antwoorden.get(3).getAlternatief();
+        } else {
+            return quiz.getVraag(huidigeVraagID).getVraagtekst();
+        }
     }
 
-
-    public void addAntwoord(String gegevenAntwoord) {
-        gegevenAntwoorden.add(gegevenAntwoord);
+    public void beantwoordVraag(String antwoord) {
+        if (quiz.getVraag(huidigeVraagID).checkAntwoord(antwoord)) {
+            aantalGoed++;
+        }
+        spelerAntwoorden.add(antwoord); //todo: check of dit nodig is
+        huidigeVraagID++;
+        if (huidigeVraagID > 8) {
+            quizFinished = true;
+        }
     }
 
-    public String getAntwoord(int i) {
-        return gegevenAntwoorden.get(i);
-    }
+    // note: stuurt een string terug van de behaalde letters
+    public String getLettersForRightAnswer() {
+        StringBuilder stringBuilder = new StringBuilder();
 
-    public void maakWoord(String woord) {
-        // woordchecker.checkWoord(woord);
+        for (int i = 0; i <= 8; i++) {
+            if (quiz.getVraag(i).checkAntwoord(spelerAntwoorden.get(i))) {
+                aantalGoed++;
+                stringBuilder.append(" ").append(quiz.getVraag(i).getLetter());
+            }
+        }
+        return stringBuilder.toString();
     }
 
     public int calculateScore(String woord) {
@@ -52,13 +76,24 @@ public class QuizUitvoering {
         return score;
     }
 
-    public String nextQuestion() {
-        if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
-            var antwoorden = (meerkeuzeVraag).getAntwoorden();
-            Collections.shuffle(antwoorden);
-            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAlternatief() + " - " + antwoorden.get(1).getAlternatief() + " - " + antwoorden.get(2).getAlternatief() + " - " + antwoorden.get(3).getAlternatief();
-        } else {
-            return quiz.getVraag(huidigeVraagID).getVraagtekst();
-        }
-    }
+    //----------------------------------------
+//todo: implementeren
+
+//       public void vraagGoed() {
+//        aantalGoed++;
+//    }
+//
+//
+//    public void addAntwoord(String gegevenAntwoord) {
+//        gegevenAntwoorden.add(gegevenAntwoord);
+//    }
+//
+//    public String getAntwoord(int i) {
+//        return gegevenAntwoorden.get(i);
+//    }
+//
+//    public void maakWoord(String woord) {
+//        // woordchecker.checkWoord(woord);
+//    }
+
 }

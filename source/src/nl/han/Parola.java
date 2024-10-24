@@ -71,16 +71,6 @@ public class Parola {
         return null;
     }
 
-
-    public void processAnswer(String playername, String antwoord) {
-        quizUitvoering.addAntwoord(antwoord);
-        huidigeVraagID++;
-
-        if (huidigeVraagID == 8) {
-            quizFinished = true;
-        }
-    }
-
     // todo: vragen toevoegen aan een quiz
     public void maakQuiz(String naamQuiz) {
         Quiz quiz = new Quiz(naamQuiz);
