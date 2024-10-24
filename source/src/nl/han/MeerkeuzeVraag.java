@@ -2,21 +2,25 @@ package nl.han;
 
 import java.util.ArrayList;
 
-public class MeerkeuzeVraag extends Vraag{
+public class MeerkeuzeVraag extends Vraag {
+    private ArrayList<Alternatief> antwoorden = new ArrayList<>();
 
-    public MeerkeuzeVraag(String vraagtekst, String categorie, Character letter, String fout1, String fout2, String fout3, String correct){
+    public MeerkeuzeVraag(String vraagtekst, String categorie, Character letter, String fout1, String fout2, String fout3, String correct) {
         super(vraagtekst, categorie, letter);
-        antwoorden.add(new Antwoord(fout1, false));
-        antwoorden.add(new Antwoord(fout2, false));
-        antwoorden.add(new Antwoord(fout3, false));
-        antwoorden.add(new Antwoord(correct, true));
+        antwoorden.add(new Alternatief(fout1, false));
+        antwoorden.add(new Alternatief(fout2, false));
+        antwoorden.add(new Alternatief(fout3, false));
+        antwoorden.add(new Alternatief(correct, true));
     }
 
-    protected ArrayList<Antwoord> getMultiplechoise(){
+    public boolean checkAntwoord(String gegevenAntwoord) {
+        Alternatief antwoord = (Alternatief) antwoorden.stream().filter(a -> gegevenAntwoord.toLowerCase()
+                .matches(a.getAlternatief().toLowerCase()));
+        return antwoord.isCorrect();
+    }
+
+    @Override
+    public ArrayList<Alternatief> getAntwoorden() {
         return antwoorden;
-    }
-
-    public boolean checkAntwoord(String gegevenAntwoord){
-        return antwoorden.stream().anyMatch(a -> gegevenAntwoord.toLowerCase().matches(a.getAntwoord().toLowerCase()) && a.isCorrect());
     }
 }

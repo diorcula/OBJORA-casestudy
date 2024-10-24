@@ -87,18 +87,22 @@ public class Parola {
     }
 
     // todo: soort vragen toevoegen
-    public void vraagToevoegen(String vraagType, String vraag, String categorie, boolean actief, char letter) {
-        if(vraagType = 'meerkeuze'){
-        Vraag newVraag = new Vraag(vraag, categorie, actief, letter);
-         vragen.add(newVraag);
-    }}
+//    public void vraagToevoegen(String vraagType, String vraag, String categorie, boolean actief, char letter) {
+//        if (vraagType = "kortantwoord") {
+//            Vraag newVraag = new Kortantwoordvraag(vraag, categorie, actief, letter);
+//            vragen.add(newVraag);
+//        } else if (vraagType = "meerkeuze") {
+//            Vraag newVraag = new MeerkeuzeVraag(vraag, categorie, actief, letter);
+//            vragen.add(newVraag);
+//        }
+//    }
 
 
     public String nextQuestion(String playername) {
         if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
-            var antwoorden = (meerkeuzeVraag).getMultiplechoise();
+            var antwoorden = (meerkeuzeVraag).getAntwoorden();
             Collections.shuffle(antwoorden);
-            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAntwoord() + " - " + antwoorden.get(1).getAntwoord() + " - " + antwoorden.get(2).getAntwoord() + " - " + antwoorden.get(3).getAntwoord();
+            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAlternatief() + " - " + antwoorden.get(1).getAlternatief() + " - " + antwoorden.get(2).getAlternatief() + " - " + antwoorden.get(3).getAlternatief();
         } else {
             return quiz.getVraag(huidigeVraagID).getVraagtekst();
         }
