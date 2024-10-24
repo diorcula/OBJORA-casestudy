@@ -17,6 +17,7 @@ public class Parola {
     private QuizUitvoering quizUitvoering;
     private boolean quizFinished;
     private int huidigeVraagID;
+    private ScoreBerekening scoreBerekening;
 
     public static Parola getInstance() {
         if (parola == null) {
@@ -27,7 +28,8 @@ public class Parola {
 
     public void startQuiz(String gebruikersnaam) {
         quiz = new Quiz().mockedQuiz();
-        quizUitvoering = new QuizUitvoering(); //hier moet nog niet de berekening aan meegegeven worden
+        scoreBerekening = new Standaard();
+        quizUitvoering = new QuizUitvoering(quiz, laadSpeler(gebruikersnaam));
         quizFinished = false;
         huidigeVraagID = 0;
     }
@@ -37,14 +39,16 @@ public class Parola {
         return quizzes.get(0);
     }
 
-    /*
-    de gebruiker gerelateerde dingen moeten
-    overeenkomen met de sequence diagrammen
-     */
-
     public void registreerGebruiker(String gebruikersnaam, String wachtwoord) {
-        Speler speler = new Speler(gebruikersnaam, wachtwoord);
-        spelers.add(speler);
+        if (controleerGebruikersnaam(gebruikersnaam)) {
+            Speler speler = new Speler(gebruikersnaam, wachtwoord);
+            spelers.add(speler);
+            speler.voegCreditsToe(1000);
+            System.out.println("Gebruiker geregistreerd");
+        } else {
+            throw new IllegalArgumentException("Gebruikersnaam bestaat al");
+        }
+
     }
 
     public boolean controleerGebruikersnaam(String gebruikersnaam) {
@@ -67,15 +71,15 @@ public class Parola {
         return null;
     }
 
-    // todo: implementeren
-//    public void koopCredits(String gebruikersnaam, int aantalCredits) {
-//    }
-//
-//    public void startTransactie(String gebruikersnaam) {
-//    }
-//
-//    public void verifieerbetaling() {
-//    }
+
+    public void processAnswer(String playername, String antwoord) {
+        quizUitvoering.addAntwoord(antwoord);
+        huidigeVraagID++;
+
+        if (huidigeVraagID == 8) {
+            quizFinished = true;
+        }
+    }
 
     // todo: vragen toevoegen aan een quiz
     public void maakQuiz(String naamQuiz) {
@@ -98,25 +102,6 @@ public class Parola {
 //    }
 
 
-    public String nextQuestion(String playername) {
-        if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
-            var antwoorden = (meerkeuzeVraag).getAntwoorden();
-            Collections.shuffle(antwoorden);
-            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAlternatief() + " - " + antwoorden.get(1).getAlternatief() + " - " + antwoorden.get(2).getAlternatief() + " - " + antwoorden.get(3).getAlternatief();
-        } else {
-            return quiz.getVraag(huidigeVraagID).getVraagtekst();
-        }
-    }
-
-    public void processAnswer(String playername, String antwoord) {
-        quizUitvoering.addAntwoord(antwoord);
-        huidigeVraagID++;
-
-        if (huidigeVraagID == 8) {
-            quizFinished = true;
-        }
-    }
-
     public boolean quizFinished(String playername) {
         return quizFinished;
     }
@@ -134,10 +119,24 @@ public class Parola {
         return stringBuilder.toString();
     }
 
-    public int calculateScore(String playername, String woord) {
-        quizUitvoering.maakWoord(woord);
+    // todo: implementeren
+//    public void koopCredits(String gebruikersnaam, int aantalCredits) {
+//    }
+//
+//    public void startTransactie(String gebruikersnaam) {
+//    }
+//
+//    public void verifieerbetaling() {
+//    }
 
-        // Geef aan welke berekening gebruikt moet worden (BerekeningA of BerekeningB)
-        return quizUitvoering.calculateScore(new Standaard());
-    }
+    //    todo: controleren of dit nodig is
+//        public String nextQuestion(String playername) {
+//        if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
+//            var antwoorden = (meerkeuzeVraag).getAntwoorden();
+//            Collections.shuffle(antwoorden);
+//            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAlternatief() + " - " + antwoorden.get(1).getAlternatief() + " - " + antwoorden.get(2).getAlternatief() + " - " + antwoorden.get(3).getAlternatief();
+//        } else {
+//            return quiz.getVraag(huidigeVraagID).getVraagtekst();
+//        }
+//    }
 }
