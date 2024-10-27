@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class MeerkeuzeVraag extends Vraag {
     private ArrayList<Alternatief> antwoorden = new ArrayList<>();
 
-    public MeerkeuzeVraag(String vraagtekst, String categorie, Character letter, String fout1, String fout2, String fout3, String correct) {
+    public MeerkeuzeVraag(String vraagtekst, String categorie, Character letter,
+                          String fout1, String fout2, String fout3, String correct) {
         super(vraagtekst, categorie, letter);
         antwoorden.add(new Alternatief(fout1, false));
         antwoorden.add(new Alternatief(fout2, false));

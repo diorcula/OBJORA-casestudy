@@ -1,7 +1,6 @@
 package nl.han;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Parola {
@@ -9,15 +8,13 @@ public class Parola {
     private ArrayList<Vraag> vragen = new ArrayList<Vraag>();
     private ArrayList<Speler> spelers = new ArrayList<Speler>();
     private ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
-    private HashMap<String, QuizUitvoering> spelerQuiz = new HashMap<String, QuizUitvoering>();
+    private HashMap<String, QuizUitvoering> spelerQuiz = new HashMap<String, QuizUitvoering>(); //voor de het bijhouden van de gespeelde quizuitvoeringen van de spelers
 
     // overige
     private static Parola parola;
     private Quiz quiz;
     private QuizUitvoering quizUitvoering;
-    private boolean quizFinished;
-    private int huidigeVraagID;
-    private ScoreBerekening scoreBerekening;
+    private Speler activeSpeler;
 
     public static Parola getInstance() {
         if (parola == null) {
@@ -26,24 +23,35 @@ public class Parola {
         return parola;
     }
 
-    public void startQuiz(String gebruikersnaam) {
-        quiz = new Quiz().mockedQuiz();
-        scoreBerekening = new Standaard();
+    public void startQuiz(String gebruikersnaam, String quizName) {
+        quiz = new Quiz().mockedQuiz(); // gebruik hier quizName for non-mocked
+        quizzes.add(quiz);
         quizUitvoering = new QuizUitvoering(quiz, laadSpeler(gebruikersnaam));
-        quizFinished = false;
-        huidigeVraagID = 0;
+        activeSpeler = laadSpeler(gebruikersnaam);
+        verminderCredits(activeSpeler, quiz);
+
+        ScoreBerekening scoreBerekening = new Standaard();
+        boolean quizFinished = false;
+        int huidigeVraagID = 0;
     }
 
-    // to implement
-    public Quiz selecteerQuiz() {
-        return quizzes.get(0);
+    private void verminderCredits(Speler activeSpeler, Quiz activeQuiz) {
+        if (activeSpeler.getCredits() < quiz.getPrijs()) {
+            throw new IllegalArgumentException("Niet genoeg credits");
+        } else {
+            activeSpeler.verminderCredits(quiz.getPrijs());
+        }
+    }
+
+    public Quiz selecteerQuiz(String quizNaam) {
+        return quizzes.stream().filter(quiz -> quiz.getQuiznaam().equals(quizNaam)).findFirst().orElse(null);
     }
 
     public void registreerGebruiker(String gebruikersnaam, String wachtwoord) {
         if (controleerGebruikersnaam(gebruikersnaam)) {
             Speler speler = new Speler(gebruikersnaam, wachtwoord);
-            spelers.add(speler);
             speler.voegCreditsToe(1000);
+            spelers.add(speler);
             System.out.println("Gebruiker geregistreerd");
         } else {
             throw new IllegalArgumentException("Gebruikersnaam bestaat al");
@@ -63,7 +71,8 @@ public class Parola {
     public Speler laadSpeler(String gebruikersnaam) {
         for (Speler speler : spelers) {
             if (speler.getGebruikersnaam().equals(gebruikersnaam)) {
-                return speler;
+                this.activeSpeler = speler;
+                return activeSpeler;
             } else {
                 throw new IllegalArgumentException("Speler niet gevonden");
             }
@@ -71,45 +80,68 @@ public class Parola {
         return null;
     }
 
-    // todo: vragen toevoegen aan een quiz
-    public void maakQuiz(String naamQuiz) {
-        Quiz quiz = new Quiz(naamQuiz);
-        for (Vraag vraag : vragen) {
-            quiz.addVraag(vraag);
-        }
-        quizzes.add(quiz);
-    }
+    public void maakQuiz(String naamQuiz, int prijs) {
+        Quiz quiz = new Quiz(naamQuiz, prijs);
 
-    // todo: soort vragen toevoegen
-//    public void vraagToevoegen(String vraagType, String vraag, String categorie, boolean actief, char letter) {
-//        if (vraagType = "kortantwoord") {
-//            Vraag newVraag = new Kortantwoordvraag(vraag, categorie, actief, letter);
-//            vragen.add(newVraag);
-//        } else if (vraagType = "meerkeuze") {
-//            Vraag newVraag = new MeerkeuzeVraag(vraag, categorie, actief, letter);
-//            vragen.add(newVraag);
-//        }
-//    }
-
-
-    public boolean quizFinished(String playername) {
-        return quizFinished;
-    }
-
-    public String getLettersForRightAnswers(String playername) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < 8; i++) {
-            if (quiz.getVraag(i).checkAntwoord(quizUitvoering.getAntwoord(i))) {
-                quizUitvoering.vraagGoed();
-                stringBuilder.append(" ").append(quiz.getVraag(i).getLetter());
+        // add 4 Meerkeuzevragen to the quiz from the vragen list
+        for (int i = 0; i < 4; i++) {
+            if (vragen.get(i) instanceof MeerkeuzeVraag) {
+                quiz.addVraag(vragen.get(i));
             }
         }
 
-        return stringBuilder.toString();
+        // add 4 Kortanwoordvragen to the quiz from the vragen list
+        for (int i = 0; i < 4; i++) {
+            if (vragen.get(i) instanceof Kortantwoordvraag) {
+                quiz.addVraag(vragen.get(i));
+            }
+        }
+
+        quizzes.add(quiz);
     }
 
-    // todo: implementeren
+    // voegt vraag toe aan de vragenpool
+    public void vraagToevoegen(String vraag, String categorie, boolean actief, char letter, int vraagtype) {
+        if (vraagtype == 1) {
+            MeerkeuzeVraag newVraag = new MeerkeuzeVraag(vraag, categorie, letter, "1", "2", "3", "4");
+            vragen.add(newVraag);
+        } else if (vraagtype == 2) {
+            Kortantwoordvraag newVraag = new Kortantwoordvraag(vraag, categorie, letter, actief);
+            vragen.add(newVraag);
+        } else {
+            throw new IllegalArgumentException("Vraagtype niet bekend");
+        }
+    }
+
+    public String getQuizzes() {
+        for (Quiz quiz : quizzes) {
+            return quiz.getQuiznaam();
+        }
+        return null;
+    }
+
+    public String nextQuestion() {
+        return quizUitvoering.nextQuestion();
+    }
+
+    public void processAnswer(String answer) {
+        quizUitvoering.beantwoordVraag(answer);
+    }
+
+    public boolean quizFinished() {
+        return quizUitvoering.quizFinished();
+    }
+
+    public String getLettersForRightAnswers(String playername) {
+        return quizUitvoering.getLettersForRightAnswer();
+    }
+
+    public int calculateScore(String playername, String word) {
+        return quizUitvoering.calculateScore(word);
+    }
+}
+// todo: implementeren
+
 //    public void koopCredits(String gebruikersnaam, int aantalCredits) {
 //    }
 //
@@ -118,15 +150,3 @@ public class Parola {
 //
 //    public void verifieerbetaling() {
 //    }
-
-    //    todo: controleren of dit nodig is
-//        public String nextQuestion(String playername) {
-//        if (quiz.getVraag(huidigeVraagID) instanceof MeerkeuzeVraag meerkeuzeVraag) {
-//            var antwoorden = (meerkeuzeVraag).getAntwoorden();
-//            Collections.shuffle(antwoorden);
-//            return meerkeuzeVraag.getVraagtekst() + " " + antwoorden.get(0).getAlternatief() + " - " + antwoorden.get(1).getAlternatief() + " - " + antwoorden.get(2).getAlternatief() + " - " + antwoorden.get(3).getAlternatief();
-//        } else {
-//            return quiz.getVraag(huidigeVraagID).getVraagtekst();
-//        }
-//    }
-}

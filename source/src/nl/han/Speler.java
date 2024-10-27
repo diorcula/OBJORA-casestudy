@@ -25,4 +25,7 @@ public class Speler {
     public String getWachtwoord(){
         return wachtwoord;
     }
+    public int getCredits(){
+        return credits;
+    }
 }
