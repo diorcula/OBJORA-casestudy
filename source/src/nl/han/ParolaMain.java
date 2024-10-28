@@ -10,14 +10,18 @@ public class ParolaMain {
         System.out.println("Enter your player name: ");
         String playername = scanner.nextLine();
 
+        System.out.println("Welcome to Parola, " + playername + ", select the quiz you want to play: " + parola.getQuizzes());
+        String quizName = scanner.nextLine();
+
         System.out.println("The 8-question quiz starts. Good luck!");
-        parola.startQuiz(playername);
+        parola.startQuiz(playername, quizName);
+
         do {
-            System.out.println(parola.nextQuestion(playername));
+            System.out.println(parola.nextQuestion());
             System.out.print("Give your answer to this question: ");
             String answer = scanner.nextLine();
-            parola.processAnswer(playername, answer);
-        } while (!parola.quizFinished(playername));
+            parola.processAnswer(answer);
+        } while (!parola.quizFinished());
 
         System.out.println("You've earned the following letters: " + parola.getLettersForRightAnswers(playername));
         System.out.print("Make a word, as long as possible, that contains these letters: ");

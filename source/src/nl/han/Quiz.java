@@ -5,10 +5,11 @@ import java.util.ArrayList;
 public class Quiz {
     private String quiznaam;
     private ArrayList<Vraag> vragen;
+    private int prijs = 100;
 
     public Quiz(){}
 
-    public Quiz(String quiznaam) {
+    public Quiz(String quiznaam, int prijs) {
         this.quiznaam = quiznaam;
         vragen = new ArrayList<>();
     }
@@ -22,17 +23,17 @@ public class Quiz {
     }
 
     public Quiz mockedQuiz(){
-        Quiz mockedQuiz = new Quiz("Oefen Quiz");
+        Quiz mockedQuiz = new Quiz("Oefen Quiz", 100);
 
         MeerkeuzeVraag vraag1 = new MeerkeuzeVraag("Wat is 2x2?", "Wiskunde", 'e', "1", "2", "3", "4");
         mockedQuiz.addVraag(vraag1);
 
-        Kortantwoordvraag vraag2 = new Kortantwoordvraag("Voornaam van de koningin?", "Koningshuis", 'm');
-        vraag2.addAntwoord(new Antwoord("Maxima"));
+        Kortantwoordvraag vraag2 = new Kortantwoordvraag("Voornaam van de koningin?", "Koningshuis", 'm', true);
+        vraag2.addAntwoord(String.valueOf(new Antwoord("Maxima")));
         mockedQuiz.addVraag(vraag2);
 
-        Kortantwoordvraag vraag3 = new Kortantwoordvraag("In welk land is Christiano Ronaldo geboren?", "Voetbal", 'p');
-        vraag3.addAntwoord(new Antwoord("Portugal"));
+        Kortantwoordvraag vraag3 = new Kortantwoordvraag("In welk land is Christiano Ronaldo geboren?", "Voetbal", 'p', true);
+        vraag3.addAntwoord(String.valueOf(new Antwoord("Portugal")));
         mockedQuiz.addVraag(vraag3);
 
         MeerkeuzeVraag vraag4 = new MeerkeuzeVraag("Welke kleur krijg je als je rood en groen mengt?", "Kunst",'e',"Blauw", "Paars", "Bruin", "Geel");
@@ -41,19 +42,19 @@ public class Quiz {
         MeerkeuzeVraag vraag5 = new MeerkeuzeVraag("Hoeveel liter is 1 kuub?", "Wiskunde", 'u',"100", "10", "10000", "1000");
         mockedQuiz.addVraag(vraag5);
 
-        Kortantwoordvraag vraag6 = new Kortantwoordvraag("Welke artiesten zijn bekend van het nummer 'Het regent zonnestralen'?", "Muziek", 'a');
-        vraag6.addAntwoord(new Antwoord("Acda en de munnik"));
-        vraag6.addAntwoord(new Antwoord("Acda & de munnik"));
-        vraag6.addAntwoord(new Antwoord("Acda & de munik"));
-        vraag6.addAntwoord(new Antwoord("Acda en de munik"));
-        vraag6.addAntwoord(new Antwoord("Acda & munnik"));
-        vraag6.addAntwoord(new Antwoord("Acda en munnik"));
+        Kortantwoordvraag vraag6 = new Kortantwoordvraag("Welke artiesten zijn bekend van het nummer 'Het regent zonnestralen'?", "Muziek", 'a', true);
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda en de munnik")));
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda & de munnik")));
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda & de munik")));
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda en de munik")));
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda & munnik")));
+        vraag6.addAntwoord(String.valueOf(new Antwoord("Acda en munnik")));
         mockedQuiz.addVraag(vraag6);
 
-        Kortantwoordvraag vraag7 = new Kortantwoordvraag("Wat is het kleinste land ter wereld?", "Geografie", 'v');
-        vraag7.addAntwoord(new Antwoord("Vaticaanstad"));
-        vraag7.addAntwoord(new Antwoord("Vaticaan"));
-        vraag7.addAntwoord(new Antwoord("Het Vaticaan"));
+        Kortantwoordvraag vraag7 = new Kortantwoordvraag("Wat is het kleinste land ter wereld?", "Geografie", 'v', true);
+        vraag7.addAntwoord(String.valueOf(new Antwoord("Vaticaanstad")));
+        vraag7.addAntwoord(String.valueOf(new Antwoord("Vaticaan")));
+        vraag7.addAntwoord(String.valueOf(new Antwoord("Het Vaticaan")));
         mockedQuiz.addVraag(vraag7);
 
         MeerkeuzeVraag vraag8 = new MeerkeuzeVraag("Hoe heet de schrijver van de Millennium-trilogie, een reeks misdaadromans? Het eerste boek uit de reeks heet\n" +
@@ -61,5 +62,12 @@ public class Quiz {
         mockedQuiz.addVraag(vraag8);
 
         return mockedQuiz;
+    }
+
+    public int getPrijs() {
+        return prijs;
+    }
+    public String getQuiznaam() {
+        return quiznaam;
     }
 }

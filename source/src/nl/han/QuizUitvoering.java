@@ -23,7 +23,7 @@ public class QuizUitvoering {
     public QuizUitvoering(Quiz quiz, Speler speler) {
         spelerAntwoorden = new ArrayList<>();
         woordchecker = new Woordchecker();
-        startTijd = System.currentTimeMillis();
+        startTijd = System.currentTimeMillis(); //vervangt startTimer()
         aantalGoed = 0;
         this.quiz = quiz;
         this.speler = speler;
@@ -76,24 +76,16 @@ public class QuizUitvoering {
         return score;
     }
 
+        public boolean quizFinished() {
+            return quizFinished;
+        }
+    }
+
     //----------------------------------------
 //todo: implementeren
 
-//       public void vraagGoed() {
-//        aantalGoed++;
-//    }
-//
-//
-//    public void addAntwoord(String gegevenAntwoord) {
-//        gegevenAntwoorden.add(gegevenAntwoord);
-//    }
-//
-//    public String getAntwoord(int i) {
-//        return gegevenAntwoorden.get(i);
-//    }
-//
 //    public void maakWoord(String woord) {
 //        // woordchecker.checkWoord(woord);
 //    }
 
-}
+//}

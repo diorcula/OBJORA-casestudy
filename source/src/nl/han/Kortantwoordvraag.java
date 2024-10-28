@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class Kortantwoordvraag extends Vraag{
 private ArrayList<Antwoord> antwoorden = new ArrayList<>();
 
-    public Kortantwoordvraag(String vraagtekst, boolean isCorrect, Character letter, String categorie) {
+    public Kortantwoordvraag(String vraagtekst, String categorie,
+                             Character letter, boolean isCorrect) {
         super(vraagtekst, categorie, letter);
         antwoorden.add(new Antwoord(vraagtekst, isCorrect));
     }
